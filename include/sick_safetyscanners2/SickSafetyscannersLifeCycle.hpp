@@ -122,6 +122,7 @@ private:
   bool m_use_sick_angles;
   float m_angle_offset;
   bool m_use_pers_conf;
+  bool m_invert_scan;
 
   // TODO diagnostics?
   // TODO dynamic reconfigure?

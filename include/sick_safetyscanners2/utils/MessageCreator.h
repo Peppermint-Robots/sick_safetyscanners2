@@ -69,7 +69,8 @@ public:
                  double range_min,
                  double range_max,
                  float angle_offset, // TODO still needed?
-                 double min_intensities);
+                 double min_intensities,
+                 bool m_invert_scan);
 
 
   /*!
@@ -123,6 +124,7 @@ private:
   double m_range_max;
   float m_angle_offset;
   double m_min_intensities = 0.0; /*!< min intensities for laser points */
+  bool m_invert_scan;
 
   // Calculation to get the median point of a reflector
   std::vector<bool>

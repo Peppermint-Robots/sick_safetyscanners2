@@ -41,7 +41,7 @@ SickSafetyscannersRos2::SickSafetyscannersRos2()
   , m_time_offset(0.0)
   , m_range_min(0.0)
   , m_range_max(0.0)
-  , m_angle_offset(-90.0)
+  , m_angle_offset(0.0) // changing this to zero(was -90.0 default) so that the x axis is pointing at 0 degree.
   , m_use_pers_conf(false)
 {
   RCLCPP_INFO(this->get_logger(), "Initializing SickSafetyscannersRos2 Node");
@@ -101,7 +101,7 @@ SickSafetyscannersRos2::SickSafetyscannersRos2()
   }
 
   m_msg_creator = std::make_unique<sick::MessageCreator>(
-    m_frame_id, m_time_offset, m_range_min, m_range_max, m_angle_offset, m_min_intensities);
+    m_frame_id, m_time_offset, m_range_min, m_range_max, m_angle_offset, m_min_intensities, m_invert_scan);
 
   // Start async receiving and processing of sensor data
   m_device->run();
@@ -149,6 +149,7 @@ void SickSafetyscannersRos2::initialize_parameters()
   this->declare_parameter<bool>("application_io_data", true);
   this->declare_parameter<bool>("use_persistent_config", false);
   this->declare_parameter<float>("min_intensities", 0.f);
+  this->declare_parameter<bool>("invert_scan", false);
 }
 
 void SickSafetyscannersRos2::load_parameters()
@@ -248,6 +249,9 @@ void SickSafetyscannersRos2::load_parameters()
 
   this->get_parameter<double>("min_intensities", m_min_intensities);
   RCLCPP_INFO(node_logger, "min_intensities: %f", m_min_intensities);
+
+  this->get_parameter<bool>("invert_scan", m_invert_scan);
+  RCLCPP_INFO(node_logger, "invert_scan: %s", btoa(m_invert_scan).c_str());
 }
 
 rcl_interfaces::msg::SetParametersResult
@@ -370,6 +374,10 @@ SickSafetyscannersRos2::parametersCallback(std::vector<rclcpp::Parameter> parame
       {
         m_min_intensities = param.as_double();
       }
+      else if (!param.get_name().compare("invert_scan"))
+      {
+        m_invert_scan = param.as_bool();
+      }
       else
       {
         result.successful = false;
@@ -385,7 +393,7 @@ SickSafetyscannersRos2::parametersCallback(std::vector<rclcpp::Parameter> parame
     m_device->changeSensorSettings(m_communications_settings);
   }
   m_msg_creator = std::make_unique<sick::MessageCreator>(
-    m_frame_id, m_time_offset, m_range_min, m_range_max, m_angle_offset, m_min_intensities);
+    m_frame_id, m_time_offset, m_range_min, m_range_max, m_angle_offset, m_min_intensities, m_invert_scan);
   return result;
 }
 
