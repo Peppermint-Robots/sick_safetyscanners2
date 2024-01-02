@@ -41,7 +41,7 @@ SickSafetyscannersRos2::SickSafetyscannersRos2()
   , m_time_offset(0.0)
   , m_range_min(0.0)
   , m_range_max(0.0)
-  , m_angle_offset(0.0) // changing this to zero(was -90.0 default) so that the x axis is pointing at 0 degree.
+  , m_angle_offset(-90.0)
   , m_use_pers_conf(false)
 {
   RCLCPP_INFO(this->get_logger(), "Initializing SickSafetyscannersRos2 Node");
